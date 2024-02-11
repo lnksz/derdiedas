@@ -6,10 +6,10 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <h1>Welcome to {{title}}!</h1>
+    <h1>Was ist der Artikel für </h1>
   `,
-  styles: [],
+  styleUrl: 'app.scss',
 })
 export class AppComponent {
-  title = 'derdiedas';
+  title = 'Der Die Das';
 }
