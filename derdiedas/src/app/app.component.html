@@ -1,9 +1,14 @@
 <div id="searchContainer">
     <mat-label>Was ist der Artikel für </mat-label>
-    <input #search matInput id="wordInput" type="search" (keyup.enter)="onEnter(search.value)" (keyup)="onKey(search.value)" [cdkTrapFocusAutoCapture]="true"
+    <input #search matInput id="wordInput" type="search" (keyup)="onKey(search.value)" [cdkTrapFocusAutoCapture]="true"
         [cdkTrapFocus]="true">
 </div>
 <div id="resultContainer">
-    <span>{{res.article}}</span> <span>{{res.word}}</span>
-    <p>{{word}}</p>
+    @for(res of results; track res.word) {
+        <tr>
+            <td id="article">{{res.article}}</td>
+            &nbsp;
+            <td>{{res.word}}</td>
+        </tr>
+    }
 </div>

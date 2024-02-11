@@ -1,12 +1,8 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
 import { A11yModule } from '@angular/cdk/a11y'
-
-export interface Word {
-  word: string;
-  article: string;
-}
+import { LookupService, Word } from './lookup.service';
 
 @Component({
   selector: 'app-root',
@@ -17,17 +13,27 @@ export interface Word {
 })
 export class AppComponent {
   title = 'Der Die Das';
-  res: Word = { word: '', article: '' };
+  results: Word[] = [];
   word = '';
-  @ViewChild('wordInput') wordInput!: MatInputModule;
+
+  constructor(private lookupService: LookupService) { }
 
   onKey(value: string) {
-    // This will suggest auto complete
-    this.word = value;
-  }
-  onEnter(value: string) {
-    // This will look up the word
-    this.word = value;
-    alert(this.word);
+    this.word = value.trim();
+    // this.res = this.lookupService.get(this.word);
+    let results = this.lookupService.getPrefixed(this.word);
+    if (results.length === 0) {
+      this.results = [];
+      return;
+    }
+    if (results.length === 1) {
+      this.results = results;
+      return;
+    }
+    if (results.find(w => w.word === this.word)) {
+      this.results = results.filter(w => w.word === this.word);
+      return;
+    }
+    this.results = results;
   }
 }
