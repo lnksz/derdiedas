@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { MatInput, MatInputModule } from '@angular/material/input';
 import { A11yModule } from '@angular/cdk/a11y'
 import { LookupService, Word } from './lookup.service';
-import { Observable } from 'rxjs';
+import { Observable, Subject, debounce, interval } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -19,23 +19,24 @@ export class AppComponent {
   limitSearchLengthTrigger = 2;
   lastTakenKeyAt = Date.now();
   debounceTime = 200; //ms
+  searchInput$ = new Subject<string>();
 
-  constructor(private lookupService: LookupService) { }
+  constructor(private lookupService: LookupService) {
+    this.searchInput$.asObservable()
+      .pipe(
+        debounce(() => interval(this.debounceTime))
+      )
+      .subscribe(this.onKey)
+  }
 
   onKey(value: string) {
-    const nowPressedAt = Date.now();
     this.results = [];
-    if (nowPressedAt - this.lastTakenKeyAt < this.debounceTime)
-      return;
-    else
-      this.lastTakenKeyAt = nowPressedAt;
 
     this.word = value.trim();
     if (this.word.length < this.limitSearchLengthTrigger) {
       this.results = [];
       return;
     }
-    // this.res = this.lookupService.get(this.word);
     let results = this.lookupService.getPrefixed(this.word);
     if (results.length === 0) {
       this.results = [];
